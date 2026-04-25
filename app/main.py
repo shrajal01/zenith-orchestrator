@@ -32,7 +32,7 @@ def startup_event():
             print("⏳ Waiting for DB...")
             time.sleep(5)
     else:
-        raise Exception("❌ DB not ready after retries")
+        print("⚠️ DB not ready, skipping for now...")
     
 app.add_middleware(
     CORSMiddleware,
