@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+
+  # 1. Database (Postgres)
+  db:
+    image: postgres:15-alpine
+    container_name: star_db
+    env_file: .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  # 2. Broker (Redis)
+  redis:
+    image: redis:7-alpine
+    container_name: star_redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  # 3. FastAPI App
+  app:
+    build: .
+    container_name: star_app
+    user: root  # Required for Docker socket access
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock  # Docker-in-Docker socket
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    restart: always
+
+  # 4. Celery Worker (no container_name to allow scaling)
+  worker:
+    build: .
+    command: celery -A app.workers.celery_app worker --loglevel=info -E --concurrency=10
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    restart: always
+
+  # 5. Monitoring Dashboard (Flower)
+  flower:
+    image: mher/flower
+    container_name: star_flower
+    command: celery --broker=redis://redis:6379/0 flower
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+    restart: always
+
+volumes:
+  postgres_data:
