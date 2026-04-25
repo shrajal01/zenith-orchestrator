@@ -18,6 +18,22 @@ load_dotenv()
 # --- 1. APP INITIALIZATION ---
 app = FastAPI(title="Star Orchestrator")
 
+@app.on_event("startup")
+def startup_event():
+    import time
+    from sqlalchemy.exc import OperationalError
+
+    for i in range(10):
+        try:
+            Base.metadata.create_all(bind=engine)
+            print("✅ Database Ready")
+            break
+        except OperationalError:
+            print("⏳ Waiting for DB...")
+            time.sleep(5)
+    else:
+        raise Exception("❌ DB not ready after retries")
+    
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"], 
@@ -27,8 +43,14 @@ app.add_middleware(
 )
 
 # --- 2. EXTERNAL SERVICES SETUP ---
-Base.metadata.create_all(bind=engine)
-redis_client = redis.from_url(os.getenv("REDIS_URL", "redis://redis:6379/0"))
+
+def get_redis():
+    try:
+        return redis.from_url(os.getenv("REDIS_URL", "redis://redis:6379/0"))
+    except Exception:
+        return None
+
+redis_client = get_redis()
 
 try:
     client = docker.from_env()
@@ -86,7 +108,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to Star Orchestrator API - Realtime Engine Active"}
+    return {"status": "running"}
 
 @app.get("/health")
 def health_check():

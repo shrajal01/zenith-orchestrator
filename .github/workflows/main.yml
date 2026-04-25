@@ -9,11 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # 2. Create .env file
       - name: Create .env file
         run: |
           echo "POSTGRES_USER=user" >> .env
@@ -24,31 +22,31 @@ jobs:
           echo "PROJECT_NAME=Star Orchestrator Pro" >> .env
           echo "ZENITH_API_KEY=pro_level_key_123" >> .env
 
-      # 3. Setup Docker
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # 4. Build containers
       - name: Build Docker Images
         run: docker compose build
 
-      # 5. Run containers
       - name: Run Containers
         run: docker compose up -d
-
 
       - name: Wait for services
         run: sleep 30
 
-    
       - name: Show container logs
         run: docker compose logs
 
-      # 6. Health check
       - name: Check App Health
-        run: curl --fail http://localhost:8000
+        run: |
+          for i in $(seq 1 15); do
+            curl -f http://localhost:8000 && exit 0
+            echo "Waiting for app..."
+            sleep 5
+          done
+          echo "App failed to start"
+          exit 1
 
-      # 7. Cleanup
       - name: Stop Containers
         if: always()
         run: docker compose down
