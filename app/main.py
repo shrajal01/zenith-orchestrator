@@ -18,14 +18,9 @@ load_dotenv()
 # --- 1. APP INITIALIZATION ---
 app = FastAPI(title="Star Orchestrator")
 
-origins = [
-    "https://zenith-orchestrator.netlify.app",
-    "https://cute-smakager-22611c.netlify.app",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origin_regex=r"https://.*\.netlify\.app",  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
