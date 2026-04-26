@@ -10,6 +10,7 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docs.docker.com/compose/)
+![CI](https://github.com/shrajal01/zenith-orchestrator/actions/workflows/main.yml/badge.svg)
 
 </div>
 
@@ -24,6 +25,20 @@ The goal was to design and ship a **production-grade distributed system** from s
 This project taught me how real backend infrastructure actually works: how Celery and Redis coordinate work across multiple processes, how WebSockets maintain persistent connections and recover from drops, how rate limiting protects an API under load, and how Docker Compose ties heterogeneous services into a single deployable unit.
 
 It's not a tutorial project. Every architectural decision — from the dead-letter queue to the WS notify callback — was made to solve a real problem.
+
+---
+
+## 🚀 Dashboard Preview
+
+![Dashboard](assets/dashboard.png)
+
+---
+
+## 🔗 Live Preview
+
+🔗 https://zenith-orchestrator.onrender.com
+
+> ⚠️ Note: Free tier deployment may take 30–50 seconds to wake up due to cold start.
 
 ---
 
@@ -63,6 +78,18 @@ It's not a tutorial project. Every architectural decision — from the dead-lett
 
 ---
 
+## Key Features
+
+- **Real-time updates** via persistent WebSocket connection with auto-reconnect
+- **Distributed task processing** across scalable Celery workers (concurrency=10)
+- **Retry + dead-letter queue** — failed tasks retry 3x with exponential backoff, then land in DLQ
+- **Rate limiting** — Redis-backed sliding window (5 tasks / 60s per user)
+- **Live analytics** — success rate, throughput, avg processing time from DB aggregations
+- **Docker infrastructure API** — deploy and inspect containers at runtime via Docker SDK
+- **Flower monitoring** at `:5555` for real-time worker and task visibility
+
+---
+
 ## Tech Stack
 
 | Layer | Technology | Role |
@@ -79,20 +106,22 @@ It's not a tutorial project. Every architectural decision — from the dead-lett
 
 ---
 
-## Key Features
+## 🧱 Deployment
 
-- **Real-time updates** via persistent WebSocket connection with auto-reconnect
-- **Distributed task processing** across scalable Celery workers (concurrency=10)
-- **Retry + dead-letter queue** — failed tasks retry 3x with exponential backoff, then land in DLQ
-- **Rate limiting** — Redis-backed sliding window (5 tasks / 60s per user)
-- **Live analytics** — success rate, throughput, avg processing time from DB aggregations
-- **Docker infrastructure API** — deploy and inspect containers at runtime via Docker SDK
-- **Flower monitoring** at `:5555` for real-time worker and task visibility
+This project is fully containerized and deployed using Docker.
+
+- 🐳 Dockerized FastAPI backend
+- ⚙️ CI/CD pipeline using GitHub Actions
+- ☁️ Deployed on Render (Cloud Platform)
+- 🔐 Environment variables managed securely
+
+The system is platform-independent and can be deployed on:
+- AWS (EC2 / ECS)
+- DigitalOcean
+- Railway / Fly.io
+- Any Docker-supported environment
 
 ---
-## 🚀 Live Dashboard Preview
-
-![Dashboard](assets/dashboard.png)
 
 ## Getting Started
 
@@ -151,7 +180,7 @@ npm start
 ## Project Structure
 
 ```
-zenith-engine/
+zenith-orchestrator/
 ├── app/
 │   ├── core/
 │   │   └── database.py        # SQLAlchemy engine + session
@@ -195,6 +224,6 @@ REACT_APP_ZENITH_API_KEY=your_api_key
 
 <div align="center">
 
-Built by **Shrajal Pandey** 
+Built by **Shrajal Pandey**
 
 </div>
