@@ -129,14 +129,20 @@ def health_check():
 async def trigger_bulk_tasks(db: Session = Depends(get_db)):
 
     # Rate limit check
-    current_usage = redis_client.get("user_rate_limit")
+    current_usage = 0
+    if redis_client:
+        val = redis_client.get("user_rate_limit")
+        if val:
+            current_usage = int(val)
+
     if current_usage and int(current_usage) >= 5:
-        raise HTTPException(status_code=429, detail="Sabar karo bhai! Limit khatam (5 tasks/min)")
+        raise HTTPException(status_code=429, detail="Wait! Limit Finish (5 tasks/min)")
     
     # Increment counter with 60s expiry
-    redis_client.incr("user_rate_limit")
-    if not current_usage:
-        redis_client.expire("user_rate_limit", 60)
+    if redis_client:
+        redis_client.incr("user_rate_limit")
+        if not current_usage:
+            redis_client.expire("user_rate_limit", 60)
         
     created_tasks = []
     try:
