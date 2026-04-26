@@ -18,6 +18,19 @@ load_dotenv()
 # --- 1. APP INITIALIZATION ---
 app = FastAPI(title="Star Orchestrator")
 
+origins = [
+    "https://zenith-orchestrator.netlify.app",
+    "https://cute-smakager-22611c.netlify.app",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.on_event("startup")
 def startup_event():
     import time
@@ -34,13 +47,7 @@ def startup_event():
     else:
         print("⚠️ DB not ready, skipping for now...")
     
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"], 
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
 
 # --- 2. EXTERNAL SERVICES SETUP ---
 

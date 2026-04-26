@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'https://zenith-orchestrator.onrender.com';
 
 const useTasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -89,7 +89,7 @@ const useTasks = () => {
       if (!isMounted) return;
 
       console.log("🔄 Attempting to connect to WebSocket...");
-      socket = new WebSocket('ws://localhost:8000/ws/tasks');
+      socket = new WebSocket('wss://zenith-orchestrator.onrender.com/ws/tasks');
 
       socket.onopen = () => {
         if (isMounted) {

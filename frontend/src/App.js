@@ -11,7 +11,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useTasks from './hooks/useTasks';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'https://zenith-orchestrator.onrender.com';
 
 const App = () => {
   const { 
