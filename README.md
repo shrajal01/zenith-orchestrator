@@ -40,6 +40,8 @@ It's not a tutorial project. Every architectural decision — from the dead-lett
 
 > ⚠️ Note: Free tier deployment may take 30–50 seconds to wake up due to cold start.
 
+API Docs available at https://zenith-orchestrator.onrender.com/docs
+
 ---
 
 ## Architecture
