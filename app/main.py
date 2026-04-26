@@ -51,8 +51,19 @@ def startup_event():
 
 def get_redis():
     try:
-        return redis.from_url(os.getenv("REDIS_URL", "redis://redis:6379/0"))
-    except Exception:
+        url = os.getenv("REDIS_URL")
+        if not url:
+            print("❌ REDIS_URL missing")
+            return None
+
+        client = redis.from_url(url, decode_responses=True)
+        client.ping()  # test connection
+        print("✅ Redis Connected")
+
+        return client
+
+    except Exception as e:
+        print(f"❌ Redis connection failed: {e}")
         return None
 
 redis_client = get_redis()
