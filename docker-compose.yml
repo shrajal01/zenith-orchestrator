@@ -41,7 +41,7 @@ services:
   # 4. Celery Worker (no container_name to allow scaling)
   worker:
     build: .
-    command: celery -A app.workers.celery_app worker --loglevel=info -E --concurrency=10
+    command: sh -c "celery -A app.workers.celery_app worker --loglevel=info -E --concurrency=2"
     volumes:
       - .:/app
     env_file:
@@ -55,7 +55,7 @@ services:
   flower:
     image: mher/flower
     container_name: star_flower
-    command: celery --broker=redis://redis:6379/0 flower
+    command: celery --broker=${REDIS_URL} flower
     ports:
       - "5555:5555"
     depends_on:
